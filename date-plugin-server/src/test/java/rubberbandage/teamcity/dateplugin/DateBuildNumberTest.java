@@ -33,7 +33,7 @@ public class DateBuildNumberTest {
 
     @Test
     public void shouldReplacePlaceholderWithDate() {
-        when(runningBuild.getBranch()).thenReturn(new MasterBranch());
+        when(runningBuild.getBranch()).thenReturn(null);
 
         dateBuildNumber.buildStarted(runningBuild);
 
@@ -42,7 +42,7 @@ public class DateBuildNumberTest {
 
     @Test
     public void shouldNotAddBranchNameWhenMaster() {
-        when(runningBuild.getBranch()).thenReturn(new MasterBranch());
+        when(runningBuild.getBranch()).thenReturn(null);
 
         dateBuildNumber.buildStarted(runningBuild);
 
@@ -56,25 +56,6 @@ public class DateBuildNumberTest {
         dateBuildNumber.buildStarted(runningBuild);
 
         verify(runningBuild).setBuildNumber("2019.117-feature");
-    }
-}
-
-class MasterBranch implements Branch {
-    @NotNull
-    @Override
-    public String getName() {
-        return "master";
-    }
-
-    @NotNull
-    @Override
-    public String getDisplayName() {
-        return "master";
-    }
-
-    @Override
-    public boolean isDefaultBranch() {
-        return true;
     }
 }
 

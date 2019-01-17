@@ -3,10 +3,7 @@ package rubberbandage.teamcity.dateplugin;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import jetbrains.buildServer.serverSide.Branch;
-import jetbrains.buildServer.serverSide.BuildServerAdapter;
-import jetbrains.buildServer.serverSide.SBuildServer;
-import jetbrains.buildServer.serverSide.SRunningBuild;
+import jetbrains.buildServer.serverSide.*;
 
 import com.intellij.openapi.diagnostic.Logger;
 
@@ -17,11 +14,10 @@ public class DateBuildNumber extends BuildServerAdapter
     private static final String DATE = "{date}";
     private static final String BRANCH = "{branch}";
 
-    private Date date;
+    private Date date = null;
 
     public DateBuildNumber(SBuildServer aBuildServer)
     {
-        date = new Date();
         System.out.println( "### DateBuildNumber adding listener=" + this );
         LOG.info("### DateBuildNumber adding listener=" + this);
 
@@ -36,40 +32,42 @@ public class DateBuildNumber extends BuildServerAdapter
     public void buildStarted(SRunningBuild build)
     {
         String buildNumber = build.getBuildNumber();
-        Branch branch = build.getBranch();
 
-        String newBuildName = buildNumber;
+        if (date == null) {
+            date = new Date();
+        }
 
         // Logging in "teamcity_install_dir\logs\stdout_XXXX.log"
         System.out.println("### DateBuildNumber plugin : buildStarted");
         LOG.info("### DateBuildNumber plugin : buildStarted");
 
+        System.out.println(String.format("### DateBuildNumber plugin : buildNumber: %s", buildNumber));
+        LOG.info(String.format("### DateBuildNumber plugin : buildNumber: %s", buildNumber));
+
         // If the build number contains the DATE = "{date}" pattern we replace it by the current date.
-        if(buildNumber.lastIndexOf(DATE) > -1)
-        {
-           newBuildName = newBuildName.replace(DATE, createBuildNumber());
-        }
-        else
-        {
-            System.out.println("### DateBuildNumber plugin, no {date} pattern found");
-            LOG.info("### DateBuildNumber plugin, no {date} pattern found");
-        }
+        buildNumber = buildNumber.replace(DATE, createBuildNumber(date));
 
-        if(branch.isDefaultBranch()) {
-            newBuildName = newBuildName.replace(BRANCH, "");
-        } else {
-            newBuildName = newBuildName.replace(BRANCH, "-" + branch.getDisplayName());
-        }
+        buildNumber = buildNumber.replace(BRANCH, getBranchName(build.getBranch()));
 
-        build.setBuildNumber(newBuildName);
+        System.out.println(String.format("### DateBuildNumber will set : buildNumber: %s", buildNumber));
+        LOG.info(String.format("### DateBuildNumber will set : buildNumber: %s", buildNumber));
+
+        build.setBuildNumber(buildNumber);
+
+        System.out.println(String.format("### DateBuildNumber after plugin : buildNumber: %s", build.getBuildNumber()));
+        LOG.info(String.format("### DateBuildNumber after plugin : buildNumber: %s", build.getBuildNumber()));
     }
 
-    private String createBuildNumber()
+    private String createBuildNumber(Date date)
     {
         // Here you can modify the date format
         // Please refer to the javaDoc :
         // http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.Mdd");
         return sdf.format(date);
+    }
+
+    private String getBranchName(Branch branch) {
+        return branch == null ? "" : String.format("-%s", branch.getDisplayName());
     }
 }
