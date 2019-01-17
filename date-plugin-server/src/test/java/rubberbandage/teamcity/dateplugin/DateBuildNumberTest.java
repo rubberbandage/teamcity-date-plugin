@@ -10,7 +10,9 @@ import org.junit.Test;
 
 import java.util.Date;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class DateBuildNumberTest {
 
@@ -32,6 +34,16 @@ public class DateBuildNumberTest {
     }
 
     @Test
+    public void shouldStillRunWhenNoSubstitutionsAreUsed() {
+        when(runningBuild.getBuildNumber()).thenReturn("random text for the build number");
+        when(runningBuild.getBranch()).thenReturn(new MasterBranch());
+
+        dateBuildNumber.buildStarted(runningBuild);
+
+        verify(runningBuild).setBuildNumber("random text for the build number");
+    }
+
+    @Test
     public void shouldReplacePlaceholderWithDate() {
         when(runningBuild.getBranch()).thenReturn(null);
 
@@ -41,8 +53,27 @@ public class DateBuildNumberTest {
     }
 
     @Test
-    public void shouldNotAddBranchNameWhenMaster() {
+    public void shouldReplaceEveryInstanceOfDate() {
+        when(runningBuild.getBuildNumber()).thenReturn("{date}.{date}");
         when(runningBuild.getBranch()).thenReturn(null);
+
+        dateBuildNumber.buildStarted(runningBuild);
+
+        verify(runningBuild).setBuildNumber("2019.117.2019.117");
+    }
+
+    @Test
+    public void shouldNotAddBranchNameWhenBranchIsNull() {
+        when(runningBuild.getBranch()).thenReturn(null);
+
+        dateBuildNumber.buildStarted(runningBuild);
+
+        verify(runningBuild).setBuildNumber("2019.117");
+    }
+
+    @Test
+    public void shouldNotAddBranchNameWhenMaster() {
+        when(runningBuild.getBranch()).thenReturn(new MasterBranch());
 
         dateBuildNumber.buildStarted(runningBuild);
 
@@ -57,23 +88,42 @@ public class DateBuildNumberTest {
 
         verify(runningBuild).setBuildNumber("2019.117-feature");
     }
-}
 
-class FeatureBranch implements Branch {
-    @NotNull
-    @Override
-    public String getName() {
-        return "feature";
+    private class MasterBranch implements Branch {
+        @NotNull
+        @Override
+        public String getName() {
+            return "master";
+        }
+
+        @NotNull
+        @Override
+        public String getDisplayName() {
+            return "<default>";
+        }
+
+        @Override
+        public boolean isDefaultBranch() {
+            return true;
+        }
     }
 
-    @NotNull
-    @Override
-    public String getDisplayName() {
-        return "feature";
-    }
+    private class FeatureBranch implements Branch {
+        @NotNull
+        @Override
+        public String getName() {
+            return "feature";
+        }
 
-    @Override
-    public boolean isDefaultBranch() {
-        return false;
+        @NotNull
+        @Override
+        public String getDisplayName() {
+            return "feature";
+        }
+
+        @Override
+        public boolean isDefaultBranch() {
+            return false;
+        }
     }
 }
