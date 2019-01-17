@@ -53,7 +53,7 @@ public class DateBuildNumber extends BuildServerAdapter
         // Here you can modify the date format
         // Please refer to the javaDoc :
         // http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy-HH'h'mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.Mdd");
         return sdf.format(currentBuild);
     }
 }

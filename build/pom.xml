@@ -4,7 +4,7 @@
   <parent>
     <artifactId>date-plugin</artifactId>
     <groupId>rubberbandage.teamcity</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <artifactId>build</artifactId>
   <packaging>pom</packaging>
@@ -16,7 +16,7 @@
       <dependency>
            <groupId>rubberbandage.teamcity</groupId>
            <artifactId>date-plugin-server</artifactId>
-           <version>1.0-SNAPSHOT</version>
+           <version>1.1-SNAPSHOT</version>
       </dependency>
   </dependencies>
   <build>
