@@ -16,11 +16,17 @@ public class DateBuildNumberTest {
 
     private SRunningBuild runningBuild;
     private SBuildServer buildServer;
+    private DateBuildNumber dateBuildNumber;
 
     @Before
     public void setUp() {
         runningBuild = mock(SRunningBuild.class);
         buildServer = mock(SBuildServer.class);
+
+        Date date = new LocalDateTime("2019-01-17").toDate();
+
+        dateBuildNumber = new DateBuildNumber(buildServer);
+        dateBuildNumber.setDate(date);
 
         when(runningBuild.getBuildNumber()).thenReturn("{date}{branch}");
     }
@@ -29,10 +35,6 @@ public class DateBuildNumberTest {
     public void shouldReplacePlaceholderWithDate() {
         when(runningBuild.getBranch()).thenReturn(new MasterBranch());
 
-        Date date = new LocalDateTime("2019-01-17").toDate();
-
-        DateBuildNumber dateBuildNumber = new DateBuildNumber(buildServer);
-        dateBuildNumber.setDate(date);
         dateBuildNumber.buildStarted(runningBuild);
 
         verify(runningBuild).setBuildNumber("2019.117");
@@ -42,10 +44,6 @@ public class DateBuildNumberTest {
     public void shouldNotAddBranchNameWhenMaster() {
         when(runningBuild.getBranch()).thenReturn(new MasterBranch());
 
-        Date date = new LocalDateTime("2019-01-17").toDate();
-
-        DateBuildNumber dateBuildNumber = new DateBuildNumber(buildServer);
-        dateBuildNumber.setDate(date);
         dateBuildNumber.buildStarted(runningBuild);
 
         verify(runningBuild).setBuildNumber("2019.117");
@@ -55,10 +53,6 @@ public class DateBuildNumberTest {
     public void shouldAddBranchNameWhenNotMaster() {
         when(runningBuild.getBranch()).thenReturn(new FeatureBranch());
 
-        Date date = new LocalDateTime("2019-01-17").toDate();
-
-        DateBuildNumber dateBuildNumber = new DateBuildNumber(buildServer);
-        dateBuildNumber.setDate(date);
         dateBuildNumber.buildStarted(runningBuild);
 
         verify(runningBuild).setBuildNumber("2019.117-feature");
