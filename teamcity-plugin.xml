@@ -3,9 +3,8 @@
   <info>
     <name>date-plugin</name>
     <display-name>date-plugin</display-name>
-    <version>@Version@</version>
-    <description>TODO</description>
-    <download-url>TODO</download-url>
+    <version>1.0.0</version>
+    <description>Allows {date} and {branch} to be used in build names</description>
   </info>
   <deployment use-separate-classloader="true" />
 </teamcity-plugin>
