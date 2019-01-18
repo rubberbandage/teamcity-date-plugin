@@ -4,13 +4,16 @@
   <parent>
     <artifactId>date-plugin</artifactId>
     <groupId>rubberbandage.teamcity</groupId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <artifactId>build</artifactId>
   <packaging>pom</packaging>
   <properties>
       <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
       <teamcity.date-plugin.plugin.version>snapshot-${maven.build.timestamp}</teamcity.date-plugin.plugin.version>
+      <teamcity.date-plugin.plugin.vendorName>Jacob Olsen</teamcity.date-plugin.plugin.vendorName>
+      <teamcity.date-plugin.plugin.vendorUrl>https://www.linkedin.com/in/jacob-o</teamcity.date-plugin.plugin.vendorUrl>
+      <teamcity.date-plugin.plugin.repoUrl>https://github.com/rubberbandage/teamcity-date-plugin</teamcity.date-plugin.plugin.repoUrl>
   </properties>
   <dependencies>
       <dependency>
@@ -38,10 +41,22 @@
                 <outputFile>${basedir}/target/teamcity-plugin.xml</outputFile>
                 <replacements>
                     <replacement>
-                        <token>@ @</token>
+                        <token>@Version@</token>
                         <value>${teamcity.date-plugin.plugin.version}</value>
                     </replacement>
-                </replacements>                        
+                    <replacement>
+                        <token>@VendorName@</token>
+                        <value>${teamcity.date-plugin.plugin.vendorName}</value>
+                    </replacement>
+                    <replacement>
+                        <token>@VendorURL@</token>
+                        <value>${teamcity.date-plugin.plugin.vendorUrl}</value>
+                    </replacement>
+                    <replacement>
+                        <token>@RepoURL@</token>
+                        <value>${teamcity.date-plugin.plugin.repoUrl}</value>
+                    </replacement>
+                </replacements>
             </configuration>
         </plugin>
         <plugin>
