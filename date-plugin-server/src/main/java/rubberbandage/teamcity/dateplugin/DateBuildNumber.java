@@ -44,8 +44,6 @@ public class DateBuildNumber extends BuildServerAdapter
 
         String buildNumber = build.getBuildNumber();
 
-        if (date == null) date = new Date();
-
         // If the build number contains the DATE = "{date}" pattern we replace it by the current date.
         buildNumber = buildNumber.replace(DATE, createBuildNumber(date));
         buildNumber = buildNumber.replace(BRANCH, createBranchName(build.getBranch()));
@@ -55,8 +53,10 @@ public class DateBuildNumber extends BuildServerAdapter
 
     private String createBuildNumber(Date date)
     {
+        Date tempDate = (date == null) ? new Date() : date;
+
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-        return sdf.format(date);
+        return sdf.format(tempDate);
     }
 
     private String createBranchName(Branch branch) {
