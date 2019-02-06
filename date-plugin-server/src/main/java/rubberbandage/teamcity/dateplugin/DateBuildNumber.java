@@ -5,6 +5,7 @@ import jetbrains.buildServer.serverSide.Branch;
 import jetbrains.buildServer.serverSide.BuildServerAdapter;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SRunningBuild;
+import org.apache.commons.lang.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +16,9 @@ public class DateBuildNumber extends BuildServerAdapter
 
     private static final String DATE = "{date}";
     private static final String BRANCH = "{branch}";
+    private static final String META = "{meta}";
+
+    private static final Integer OCTOPACK_MAX_LENGTH = 20;
 
     // Here you can modify the date format
     // Please refer to the javaDoc :
@@ -47,6 +51,7 @@ public class DateBuildNumber extends BuildServerAdapter
         // If the build number contains the DATE = "{date}" pattern we replace it by the current date.
         buildNumber = buildNumber.replace(DATE, createBuildNumber(date));
         buildNumber = buildNumber.replace(BRANCH, createBranchName(build.getBranch()));
+        buildNumber = buildNumber.replace(META, createMetaInformation(build.getBranch()));
 
         build.setBuildNumber(buildNumber);
     }
@@ -66,7 +71,21 @@ public class DateBuildNumber extends BuildServerAdapter
 
             return "";
         } else {
-            return branch.isDefaultBranch() ? "" : String.format("-%s", branch.getDisplayName());
+            String branchName = branch.getDisplayName().replaceAll("\\/", "_");
+            branchName = StringUtils.left(branchName, OCTOPACK_MAX_LENGTH);
+            return branch.isDefaultBranch() ? "" : String.format("-%s", branchName);
+        }
+    }
+
+    private String createMetaInformation(Branch branch) {
+        if (branch == null) {
+            System.out.println(BRANCH_NOT_CONFIGURED);
+            LOG.info(BRANCH_NOT_CONFIGURED);
+
+            return "";
+        } else {
+            String branchName = branch.getDisplayName().replaceAll("\\/", "_");
+            return branch.isDefaultBranch() ? "+master" : String.format("+%s", branchName);
         }
     }
 

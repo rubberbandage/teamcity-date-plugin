@@ -4,7 +4,7 @@
     <name>date-plugin</name>
     <display-name>Date Plugin</display-name>
     <version>@Version@</version>
-    <description>Allows {date} and {branch} to be used in build names</description>
+    <description>Allows {date}, {branch} and {meta} to be used in build names</description>
     <download-url>@RepoURL@</download-url>
     <vendor>
       <name>@VendorName@</name>

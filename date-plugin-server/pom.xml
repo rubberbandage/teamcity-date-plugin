@@ -6,10 +6,10 @@
     <parent>
         <artifactId>date-plugin</artifactId>
         <groupId>rubberbandage.teamcity</groupId>
-        <version>1.4.0</version>
+        <version>1.4.1</version>
     </parent>
     <artifactId>date-plugin-server</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <packaging>jar</packaging>
     <dependencies>
 
@@ -40,6 +40,19 @@
             <artifactId>tests-support</artifactId>
             <version>${teamcity-version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.teamcity</groupId>
+            <artifactId>tests-support</artifactId>
+            <version>${teamcity-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
     </dependencies>
     

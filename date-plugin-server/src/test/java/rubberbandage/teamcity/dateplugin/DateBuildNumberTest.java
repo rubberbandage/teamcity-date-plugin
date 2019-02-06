@@ -30,7 +30,7 @@ public class DateBuildNumberTest {
         dateBuildNumber = new DateBuildNumber(buildServer);
         dateBuildNumber.setDate(date);
 
-        when(runningBuild.getBuildNumber()).thenReturn("{date}{branch}");
+        when(runningBuild.getBuildNumber()).thenReturn("{date}{branch}{meta}");
     }
 
     @Test
@@ -77,7 +77,7 @@ public class DateBuildNumberTest {
 
         dateBuildNumber.buildStarted(runningBuild);
 
-        verify(runningBuild).setBuildNumber("2019.117");
+        verify(runningBuild).setBuildNumber("2019.117+master");
     }
 
     @Test
@@ -86,7 +86,26 @@ public class DateBuildNumberTest {
 
         dateBuildNumber.buildStarted(runningBuild);
 
-        verify(runningBuild).setBuildNumber("2019.117-feature");
+        verify(runningBuild).setBuildNumber("2019.117-feature+feature");
+    }
+
+    @Test
+    public void shouldTransformSlashesToUnderscore() {
+        when(runningBuild.getBranch()).thenReturn(new SlashBranch());
+
+        dateBuildNumber.buildStarted(runningBuild);
+
+        verify(runningBuild).setBuildNumber("2019.117-feature_subfeature+feature_subfeature");
+    }
+
+    @Test
+    public void shouldTrimNameOnLengthyBranches() {
+        when(runningBuild.getBuildNumber()).thenReturn("{date}{branch}");
+        when(runningBuild.getBranch()).thenReturn(new LengthyBranch());
+
+        dateBuildNumber.buildStarted(runningBuild);
+
+        verify(runningBuild).setBuildNumber("2019.117-feature_subfeature_b");
     }
 
     private class MasterBranch implements Branch {
@@ -119,6 +138,44 @@ public class DateBuildNumberTest {
         @Override
         public String getDisplayName() {
             return "feature";
+        }
+
+        @Override
+        public boolean isDefaultBranch() {
+            return false;
+        }
+    }
+
+    private class SlashBranch implements Branch {
+        @NotNull
+        @Override
+        public String getName() {
+            return "feature/subfeature";
+        }
+
+        @NotNull
+        @Override
+        public String getDisplayName() {
+            return "feature/subfeature";
+        }
+
+        @Override
+        public boolean isDefaultBranch() {
+            return false;
+        }
+    }
+
+    private class LengthyBranch implements Branch {
+        @NotNull
+        @Override
+        public String getName() {
+            return "feature/subfeature/bugfix/tinyfeature";
+        }
+
+        @NotNull
+        @Override
+        public String getDisplayName() {
+            return "feature/subfeature/bugfix/tinyfeature";
         }
 
         @Override
